@@ -1,6 +1,7 @@
 const createElement = function(elName, className, textContent, image) {
     const createdElement = document.createElement(elName)
     createdElement.className = className;
+
     
     if (textContent){
         createdElement.textContent = textContent;
@@ -8,6 +9,16 @@ const createElement = function(elName, className, textContent, image) {
         createdElement.src = image 
     }
     return createdElement ;
+}
+
+const addZero = function(number) {
+    return number < 10 ? "0" + number : number 
+}
+
+const dateShow = function(dateString) {
+    const date = new Date(dateString);
+
+    return `${addZero(date.getDate())}.${addZero(date.getMonth())}.${date.getFullYear()}`
 }
 
 const birdsList = document.querySelector("#bird-list");
@@ -28,7 +39,7 @@ const renderBird = function(parrot){
     birdPrice.append(birdPriceMark);
     const birdWidth = createElement("p", "badge bg-success", `${sizes.width}sm x ${sizes.height}sm`, "");
 
-    const birdBirth = createElement("p", "card-text", birthDate, "");
+    const birdBirth = createElement("p", "card-text", dateShow(birthDate), "");
 
     const birdBenefitsList = createElement("ul", "d-flex flex-wrap list-unstyled", "","");
     const birdBenefitsItem = createElement("li", "badge bg-primary me-1 mb-1","","");  
@@ -98,13 +109,6 @@ const addForm = document.querySelector("#add-parrot-modal");
 const addParrotModalEl = document.querySelector("#add-parrot-modal");
 const addParrotModal = new bootstrap.Modal(addParrotModalEl)
 
-// const parrotTitle = document.querySelector("#parrot-title");
-// const parrotImg = document.querySelector("#parrot-img");
-// const parrotDate = document.querySelector("#parrot-date");
-// const parrotWidth = document.querySelector("#parrot_width");
-// const parrotHeight = document.querySelector("#parrot_height");
-// const parrotFeature = document.querySelector("#feature");
-
 addForm.addEventListener("submit", function(evt){
     evt.preventDefault();
 
@@ -133,7 +137,7 @@ addForm.addEventListener("submit", function(evt){
             id : Math.floor(Math.random() * 1000),
             img : imgValue, 
             title : titleValue,
-            date : dateValue,
+            date : new Date().toISOString(),
             price : priceValue,
             sizes: {
                 width : widthValue,
