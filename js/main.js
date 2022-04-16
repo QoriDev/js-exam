@@ -38,16 +38,18 @@ const renderBird = function(parrot){
     const birdShowFavourites = createElement("button", "btn rounded-0 btn-success","","");
     const birdFa = createElement("i", "fa fa-star-o","","");
     birdShowFavourites.append(birdFa);
-    const birdEdit = createElement("button", "btn rounded-0 btn-secondary","")
+    const birdEditBtn = createElement("button", "btn rounded-0 btn-secondary","")
     const birdFaPEn = createElement("i", "fa-solid fa-pen","");
-    birdEdit.append(birdFaPEn);
-    const birdDel = createElement("button", "btn rounded-0 btn-danger","");
+    birdEditBtn.append(birdFaPEn);
+    const birdDelBtn = createElement("button", "btn rounded-0 btn-danger","");
     const birdFaTrash = createElement("button", "fa-solid fa-trash","");
-    birdDel.append(birdFaTrash);
+    birdDelBtn.setAttribute("date-id", id);
+    birdFaTrash.style.pointerEvents = "none";
+    birdDelBtn.append(birdFaTrash);
 
     birdPosition.append(birdShowFavourites);
-    birdPosition.append(birdEdit);
-    birdPosition.append(birdDel);
+    birdPosition.append(birdEditBtn);
+    birdPosition.append(birdDelBtn);
 
     birdCard.append(birdImg);
     birdCard.append(birdCardBody);
@@ -64,12 +66,11 @@ const renderBird = function(parrot){
     return birdItem ;
 }
 
-const renderBirds = function(parrotArray){
-    // birdsList.innerHTML = "";
+const renderBirds = function(parrotArray = parrots){
+    birdsList.innerHTML = "";
 
-    parrotArray.forEach(function(parrots){
-        const parrots = parrots[i]
-        const birdItem = renderBird(parrots);
+    parrotArray.forEach(function(parrot){
+        const birdItem = renderBird(parrot);
         birdsList.append(birdItem)
     })
 }
@@ -79,6 +80,19 @@ const renderBirds = function(parrotArray){
         const birdItem = renderBird(currentParrots)
         birdsList.append(birdItem)
     }
+
+    birdsList.addEventListener("click", function(evt){
+        evt.preventDefault()
+        if(evt.target.matches(".btn-danger")){
+            const clickedItemId = +evt.target.dataset.id
+    
+            const clickedItemIndex = parrots.findIndex(function(parrot) {
+                return parrots.id === clickedItemId;
+            })
+            parrots.splice(clickedItemIndex, 1)
+            renderBirds()
+        }
+    })
 
 const addForm = document.querySelector("#add-parrot-modal");
 const addParrotModalEl = document.querySelector("#add-parrot-modal");
@@ -96,22 +110,24 @@ addForm.addEventListener("submit", function(evt){
 
     const elements = evt.target.elements;
 
-    const titleInput = elements.title;
-    const imgInput = elements.img; 
-    const dateInput = elements.birthDate;
-    const sizesInput = elements.sizes;
-    const featuresInput = elements.features;
-    const priceInput = elements.price;
+    const titleInput = elements["parrot-title"];
+    const imgInput = elements["parrot-img"]; 
+    const dateInput = elements["parrot-date"];
+    const widthInput = elements["parrot_width"];
+    const heightInput = elements["parrot_height"];
+    const featuresInput = elements["features"];
+    const priceInput = elements["price"];
 
     const priceValue = priceInput.value;
-    const titleValue = titleInput["parrot-title"].value;
-    const imgValue = imgInput["parrot-img"].value;
-    const dateValue = dateInput["parrot-date"].value;
-    const widthValue = sizesInput["parrot_width"].value;
-    const heightValue = sizesInput["parrot_height"].value;
-    const featuresValue = featuresInput["feature"].value;
+    const titleValue = titleInput.value;
+    const imgValue = imgInput.value;
+    const dateValue = dateInput.value;
+    const widthValue = widthInput.value;
+    const heightValue = heightInput.value;
+    const featuresValue = featuresInput.value;
 
-    if(titleValue.trim() && imgValue.trim() && dateValue.trim() && widthValue.trim() && heightValue.trim() && featuresValue.trim()){
+    if(titleValue.trim() && imgValue.trim() && dateValue.trim() && widthValue.trim() 
+    && heightValue.trim() && featuresValue.trim()){
 
         const parrot = {
             id : Math.floor(Math.random() * 1000),
@@ -125,16 +141,15 @@ addForm.addEventListener("submit", function(evt){
             },
             features : featuresValue,
         }
-            console.log(parrot)
 
         parrots.push(parrot);
-        addForm.reset();
         addParrotModal.hide();
+
+        const renderItem = renderBird(parrot);
+        birdsList.append(renderItem)
     }
 
 })  
-
-
 
 
 const filterForm = document.querySelector(".filter")
@@ -158,10 +173,9 @@ filterForm.addEventListener("submit", function(evt){
     })
     .filter(function(parrot){
         const searchToValue = parrot.price;
-        return !searchToValue ? true: searchToValue <= toValue;
+        return !toValue ? true: searchToValue <= toValue;
     })
     renderBirds(filteredParrot)
-    console.log(filteredParrot)
 })
 
 
