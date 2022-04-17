@@ -110,7 +110,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form id="add-form">
             <div class="mb-3">
               <label for="parrot-title" class="form-label">Title</label>
               <input type="search" class="form-control" id="parrot-title" required placeholder="Kakatu">
@@ -159,7 +159,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form class="edit-form">
+          <form id="edit-form">
             <div class="mb-3">
               <label for="parrot-title" class="form-label">Title</label>
               <input type="search" class="form-control" id="edit-parrot-title" required placeholder="Kakatu">
@@ -170,7 +170,7 @@
             </div>
             <div class="mb-3">
               <label for="price" class="form-label">Price ($)</label>
-              <input type="number" class="form-control" id="edit-price" required placeholder="1000">
+              <input type="number" class="form-control" id="edit-parrot-price" required placeholder="1000">
             </div>
             <div class="mb-3">
               <label for="parrot-date" class="form-label">Birth date</label>
@@ -191,7 +191,7 @@
 
             <div class="mb-3">
               <label for="features" class="form-label">Features ("," bilan ajratib yozing)</label>
-              <input type="text" class="form-control" id="edit-features" required placeholder="Qo'lga o'rgatilgan,Gapira oladi">
+              <input type="text" class="form-control" id="edit-parrot-features" required placeholder="Qo'lga o'rgatilgan,Gapira oladi">
             </div>
             <button type="submit" class="btn btn-primary d-block w-100 p-2">Filter</button>
           </form>
