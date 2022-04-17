@@ -50,13 +50,19 @@ const renderBird = function(parrot){
     const birdFa = createElement("i", "fa fa-star-o","","");
     birdShowFavourites.append(birdFa);
     const birdEditBtn = createElement("button", "btn rounded-0 btn-secondary","")
-    const birdFaPEn = createElement("i", "fa-solid fa-pen","");
-    birdEditBtn.append(birdFaPEn);
+    const birdEditIcon = createElement("i", "fa-solid fa-pen","");
+    birdEditIcon.style.pointerEvents = "none";
+    birdEditBtn.append(birdEditIcon);
+    // birdEditBtn.setAttribute("data-bs-dismiss", "modal");
+    birdEditBtn.setAttribute("data-bs-toggle" ,"modal")
+    birdEditBtn.setAttribute("data-bs-target", "#edit-parrot-modal");
+    birdEditBtn.setAttribute("data-id", id);
+
     const birdDelBtn = createElement("button", "btn rounded-0 btn-danger","");
-    const birdFaTrash = createElement("button", "fa-solid fa-trash","");
-    birdDelBtn.setAttribute("date-id", id);
-    birdFaTrash.style.pointerEvents = "none";
-    birdDelBtn.append(birdFaTrash);
+    const birdDelIcon = createElement("button", "fa-solid fa-trash","");
+    birdDelBtn.setAttribute("data-id", id);
+    birdDelIcon.style.pointerEvents = "none";
+    birdDelBtn.append(birdDelIcon);
 
     birdPosition.append(birdShowFavourites);
     birdPosition.append(birdEditBtn);
@@ -77,37 +83,63 @@ const renderBird = function(parrot){
     return birdItem ;
 }
 
-const renderBirds = function(parrotArray = parrots){
+const renderBirds = function() {
     birdsList.innerHTML = "";
-
-    parrotArray.forEach(function(parrot){
-        const birdItem = renderBird(parrot);
-        birdsList.append(birdItem)
-    })
+     parrots.forEach(function(parrot){
+     const birdItem = renderBird(parrot);
+     birdsList.append(birdItem)
+    });
 }
-
+      
     for (let i = 0; i < parrots.length; i++){
         const currentParrots = parrots[i]
         const birdItem = renderBird(currentParrots)
         birdsList.append(birdItem)
     }
 
-    birdsList.addEventListener("click", function(evt){
-        evt.preventDefault()
+    const titleEdit = document.querySelector("#edit-parrot-title");
+    const priceEdit = document.querySelector("#edit-price");
+    const widthEdit = document.querySelector("#edit-parrot_width");
+    const heightEdit = document.querySelector("#edit-parrot_height");
+    const editForm = document.querySelector(".edit-form");
+
+    // --------------------delete--------------------
+
+    birdsList.addEventListener("click", function(evt){ 
         if(evt.target.matches(".btn-danger")){
-            const clickedItemId = +evt.target.dataset.id
-    
+            const clickedItemId = +evt.target.dataset.id;
             const clickedItemIndex = parrots.findIndex(function(parrot) {
-                return parrots.id === clickedItemId;
+                return parrot.id === clickedItemId;
             })
-            parrots.splice(clickedItemIndex, 1)
+            parrots.splice(clickedItemIndex, 1);
+
             renderBirds()
+
+        } else if (evt.target.matches(".btn-secondary")){
+            const clickedId = +evt.target.dataset.id
+
+            const clickedItem = parrots.find(function(parrot){
+                return parrot.id === clickedId ;
+
+            })
+             
+            titleEdit.value = clickedItem.title;
+            priceEdit.value = clickedItem.price;
+            widthEdit.value = clickedItem.sizes.width;
+            heightEdit.value = clickedItem.sizes.height;
+
+            editForm.setAttribute("data-editing-id", clickedId);
         }
     })
 
+   renderBirds();
+
 const addForm = document.querySelector("#add-parrot-modal");
 const addParrotModalEl = document.querySelector("#add-parrot-modal");
-const addParrotModal = new bootstrap.Modal(addParrotModalEl)
+const addParrotModal = new bootstrap.Modal(addParrotModalEl);
+
+const editParrotModalEl = document.querySelector("#edit-parrot-modal");
+const editParrotModal = new bootstrap.Modal(editParrotModalEl)
 
 addForm.addEventListener("submit", function(evt){
     evt.preventDefault();
@@ -155,6 +187,63 @@ addForm.addEventListener("submit", function(evt){
 
 })  
 
+// ----------------------edit------------------------
+
+editForm.addEventListener("submit", function(evt){
+    evt.preventDefault();
+
+    const elements = evt.target.elements;
+
+    const editingId = evt.target.elements["editing-id"]
+
+    const titleInput = elements["edit-parrot-title"];
+    const imgInput = elements["edit-parrot-img"]; 
+    const dateInput = elements["edit-parrot-date"];
+    const widthInput = elements["edit-parrot_width"];
+    const heightInput = elements["edit-parrot_height"];
+    const featuresInput = elements["edit-features"];
+    const priceInput = elements["edit-price"];
+
+    const priceValue = priceInput.value;
+    const titleValue = titleInput.value;
+    const imgValue = imgInput.value;
+    const dateValue = dateInput.value;
+    const widthValue = widthInput.value;
+    const heightValue = heightInput.value;
+    const featuresValue = featuresInput.value;
+
+    if(titleValue.trim() && dateValue.trim() && widthValue.trim() 
+    && heightValue.trim() && featuresValue.trim()){
+
+        const editingItemIndex = parrots.findIndex(function(parrot){
+            return parrot.id === editingId
+        })
+
+        const parrot = {
+            id : editingId,
+            img : imgValue, 
+            title : titleValue,
+            date : new Date().toISOString(),
+            price : priceValue,
+            sizes: {
+                width : widthValue,
+                height : heightValue
+            },
+            features : featuresValue,
+        }
+
+        parrots.splice(editingItemIndex, 1, parrot);
+
+        editForm.reset();
+        parrots.push(parrot);
+        editParrotModal.hide();
+
+        renderBirds();
+    }
+
+})  
+
+// --------------------filter--------------------
 
 const filterForm = document.querySelector(".filter")
 
